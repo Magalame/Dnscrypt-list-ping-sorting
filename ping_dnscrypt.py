@@ -9,6 +9,37 @@ import socket
 #import math
 import sys
 import urllib.request
+import threading
+
+class PingThread (threading.Thread):
+   def __init__(self, ip, ipv6):
+      threading.Thread.__init__(self)
+      self.ip = ip
+      self.ipv6 = ipv6
+   def run(self):
+      global pinglist
+      global down
+      global ipv6_available
+      if not self.ipv6:
+            ping_result = ping(self.ip)
+      else:
+            try:
+                  ping_result = ping6(self.ip)
+            except Exception as e:
+#                  print("#################################################")
+#                  print(str(e))
+                  if str(e) == "[Errno 101] Network is unreachable":
+                        ipv6_available = False
+#                        print("sucess")
+#                  print("#################################################")
+                  return
+            #ping_result = ping6(self.ip)
+      #print(ping_result)
+
+      if ping_result != None:
+            pinglist.append(ping_result)
+      else:
+            down = down + 1
 
 def mean(list):
     return sum(list) / len(list)
@@ -87,20 +118,24 @@ def mergeSort(list):
 
         merge(list,left,right)
 
+pinglist = []
+down = 0
 def meanPing(addr,nb,ipv6=False):
+    global pinglist
     pinglist = []
-    down = 0
-    for i in range(0,nb):
-        if not ipv6:
-            ping_result = ping(addr)
-        else: 
-            ping_result = ping6(addr)
 
-        if ping_result != None:
-            pinglist.append(ping_result)
-        else:
-            down = down + 1
+    global down
+    down = 0
+
+    threadlist = []
+
+    for i in range(0,nb):
+        threadlist.append(PingThread(addr,ipv6))
+        threadlist[i].start()
 #        print(str(i) + " " + str(ping_result))
+
+    for thread in threadlist:
+        thread.join()
 
     pct_error = down/float(nb)
 
@@ -109,14 +144,14 @@ def meanPing(addr,nb,ipv6=False):
     else:
         return [None,None,1.0]
 
-
+ipv6_available = True
 def pingDnscryptFile(filename):
-
+    global ipv6_available
     reader = csv.reader(open(filename, "rt"), delimiter=",")
     liste = []
     down_liste = []
     count = 0
-    ipv6_available = True
+#    ipv6_available = True
     print("-----------------------Pinging servers-----------------------")
     for row in reader:
         if row[0] != "Name":
@@ -138,6 +173,10 @@ def pingDnscryptFile(filename):
 #                    sys.stdout.write("Pinging " + ip[1].split("]")[0] + "\r")
                     ping_result = meanPing(ip[1].split("]")[0],5,1)
                 except Exception as e:
+ #                   print("say hi")
+  #                  print("--------------------------------------------------")
+   #                 print(str(e))
+    #                print("--------------------------------------------------")
                     if str(e) == "[Errno 101] Network is unreachable":
                         ipv6_available = False
 
@@ -197,5 +236,3 @@ def pingDnscrypt():
 
 if __name__ == '__main__':
     pingDnscrypt()
-
-
