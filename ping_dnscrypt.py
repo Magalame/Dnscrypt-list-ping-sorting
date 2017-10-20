@@ -10,38 +10,10 @@ import socket
 import sys
 import urllib.request
 import threading
+from timeit import default_timer as timer
+start_time = time.time()
 
-class PingThread (threading.Thread):
-   def __init__(self, ip, ipv6):
-      threading.Thread.__init__(self)
-      self.ip = ip
-      self.ipv6 = ipv6
-   def run(self):
-      global pinglist
-      global down
-      global ipv6_available
-      if not self.ipv6:
-            ping_result = ping(self.ip)
-      else:
-            try:
-                  ping_result = ping6(self.ip)
-            except Exception as e:
-#                  print("#################################################")
-#                  print(str(e))
-                  if str(e) == "[Errno 101] Network is unreachable":
-                        ipv6_available = False
-#                        print("sucess")
-#                  print("#################################################")
-                  return
-            #ping_result = ping6(self.ip)
-      #print(ping_result)
-
-      if ping_result != None:
-            pinglist.append(ping_result)
-      else:
-            down = down + 1
-
-def mean(list):
+def mean(list): 
     return sum(list) / len(list)
 
 def std(list):
@@ -56,6 +28,7 @@ def chk(data):
     return struct.pack('<H', ~x & 0xFFFF)
 
 # from https://gist.github.com/pyos/10980172
+# ICMP ping for ipv4
 def ping(addr, timeout=1, number=1, data=b''):
     with socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP) as conn:
         payload = struct.pack('!HH', random.randrange(0, 65536), number) + data
@@ -70,7 +43,7 @@ def ping(addr, timeout=1, number=1, data=b''):
                 continue
             if data[20:] == b'\0\0' + chk(b'\0\0\0\0' + payload) + payload:
                 return time.time() - start
-
+#ICMP ping for ipv6
 def ping6(addr, timeout=1, number=1, data=b''):
     with socket.socket(socket.AF_INET6, socket.SOCK_RAW, socket.IPPROTO_ICMP) as conn:
         payload = struct.pack('!HH', random.randrange(0, 65536), number) + data
@@ -85,6 +58,27 @@ def ping6(addr, timeout=1, number=1, data=b''):
                 continue
             if data[20:] == b'\0\0' + chk(b'\0\0\0\0' + payload) + payload:
                 return time.time() - start
+#TCP ping for ipv4, useful when ICMP is disabled on the pinged server
+def pingtcp(host, port, count=1): 
+    for n in range(1, count + 1):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            time.sleep(1)
+                
+            start_time = timer()
+                
+            s.connect((host, port))
+            s.shutdown(socket.SHUT_RD)
+                
+            stop_time = timer()
+                                
+                
+            s_runtime = 1000 * (stop_time-start_time)
+            
+            return s_runtime
+
+        except Exception as e:
+            print(e)
 
 def merge(list,left,right):
 
@@ -117,14 +111,40 @@ def mergeSort(list):
         mergeSort(right)
 
         merge(list,left,right)
+        
+class PingThread (threading.Thread):
+   def __init__(self, ip, ipv6):
+      threading.Thread.__init__(self)
+      self.ip = ip
+      self.ipv6 = ipv6
+      
+   def run(self):
 
-pinglist = []
-down = 0
+      global ipv6_available
+      if not self.ipv6:
+            self.ping_result = ping(self.ip)
+      else:
+            try:
+                  self.ping_result = ping6(self.ip)
+            except Exception as e:
+#                  print("#################################################")
+#                  print(str(e))
+                  if str(e) == "[Errno 101] Network is unreachable":
+                        ipv6_available = False
+#                        print("sucess")
+#                  print("#################################################")
+                  #return
+            #ping_result = ping6(self.ip)
+      #print(ping_result)
+
+
+#pinglist = []
+#down = 0
 def meanPing(addr,nb,ipv6=False):
-    global pinglist
+    #global pinglist
     pinglist = []
 
-    global down
+    #global down
     down = 0
 
     threadlist = []
@@ -136,9 +156,14 @@ def meanPing(addr,nb,ipv6=False):
 
     for thread in threadlist:
         thread.join()
+        
+        if thread.ping_result != None:
+            pinglist.append(thread.ping_result)
+        else:
+            down = down + 1
 
     pct_error = down/float(nb)
-
+    #print("ip:",addr,"liste:",pinglist)
     if pct_error != 1:
         return [mean(pinglist),std(pinglist)/(nb**0.5),down/nb]
     else:
@@ -163,7 +188,7 @@ def pingDnscryptFile(filename):
 
                 try:
  #                   sys.stdout.write("Pinging " + ip[0].split(':')[0] + "\r")
-                    ping_result = meanPing(ip[0].split(':')[0],5)
+                    ping_result = meanPing(ip[0].split(':')[0],50)
                 except:
                     ping_result = [None]
 
@@ -171,7 +196,7 @@ def pingDnscryptFile(filename):
 
                 try:
 #                    sys.stdout.write("Pinging " + ip[1].split("]")[0] + "\r")
-                    ping_result = meanPing(ip[1].split("]")[0],5,1)
+                    ping_result = meanPing(ip[1].split("]")[0],50,1)
                 except Exception as e:
  #                   print("say hi")
   #                  print("--------------------------------------------------")
@@ -236,3 +261,4 @@ def pingDnscrypt():
 
 if __name__ == '__main__':
     pingDnscrypt()
+#print("--- %s seconds ---" % (time.time() - start_time))
