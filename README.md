@@ -17,9 +17,9 @@ then
 `sudo python3 ping_dnscrypt.py`
 
 # You don't have python or the good version of python, and you want to download an executable?
-You can download it here: https://drive.google.com/file/d/0Bxzq1JsVPF3ebUtpS1VGdWNHYlE/view?usp=sharing
+You can download it here: https://drive.google.com/file/d/0Bxzq1JsVPF3eVzVqbjBYaVpZZHc/view?usp=sharing
 
-Here is a portable version: https://drive.google.com/open?id=0Bxzq1JsVPF3eSEhJcDZHbUF0cW8
+Here is a portable version: https://drive.google.com/file/d/0Bxzq1JsVPF3eVzVqbjBYaVpZZHc/view?usp=sharing
 
 Once downloaded and installed, you can launch it with typing
 `"C:\Program Files\Ping dnscrypt\pingdnscrypt.exe"`
