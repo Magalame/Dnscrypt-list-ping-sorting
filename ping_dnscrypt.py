@@ -27,7 +27,7 @@ if not args.server_delay:
     args.server_delay = 0.1
 
 if not args.number_ping:
-    args.number_ping = 50
+    args.number_ping = 20
 
 #-------------------------------some useful functions for threading
 
@@ -66,10 +66,13 @@ class PingThread (threading.Thread):
             try:
                   self.ping_result = pingtcp(self.ip,int(self.port))
                   if self.ping_result == None:
+                      
                         if self.port_originally_none:
-                              self.ping_result = pingtcp(self.ip,443)
+                              self.ping_result = pingtcp(self.ip,443) #if port 53 didn't work try port 443
+
                               if self.ping_result == None:
                                   self.ping_result = ping(self.ip)
+
                         else:
                               self.ping_result = ping(self.ip)
                   
@@ -182,27 +185,6 @@ def ping(addr, timeout=1, number=1, data=b'', ipv6 = False):
         return None
     except:
         raise
-
-def ping6(addr, timeout=1, number=1, data=b''):
-    global ipv6_available
-    try:
-        with socket.socket(socket.AF_INET6, socket.SOCK_RAW, socket.IPPROTO_ICMP) as conn:
-            payload = struct.pack('!HH', random.randrange(0, 65536), number) + data
-
-            conn.connect((addr, 80,0,0))
-            conn.sendall(b'\x08\0' + chk(b'\x08\0\0\0' + payload) + payload)
-            start = time.time()
-
-            while select.select([conn], [], [], max(0, start + timeout - time.time()))[0]:
-                data = conn.recv(65536)
-                if len(data) < 20 or len(data) < struct.unpack_from('!xxH', data)[0]:
-                    continue
-                if data[20:] == b'\0\0' + chk(b'\0\0\0\0' + payload) + payload:
-                    return time.time() - start
-    except OSError:
-        ipv6_available = False
-        return None
-        
 
 def pingtcp(host, port): 
 
@@ -357,7 +339,7 @@ def pingDnscryptFile(filename):
                 #print(ip[1])
                 port = ip[1].split("]")[1].split(':')[1]
                 
-                threadlist.append(meanPingThread(ip[1].split("]")[0],row,args.number_ping, port, True))
+                threadlist.append(meanPingThread(ip[1].split("]")[0],row,args.number_ping, port, True)) 
                 count_thread = count_thread+1
                 threadlist[count_thread-1].start()
                 time.sleep(args.server_delay)
