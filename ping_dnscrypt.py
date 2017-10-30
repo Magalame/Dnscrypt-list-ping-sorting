@@ -7,9 +7,20 @@ import select
 import socket
 import sys
 import urllib.request
-import threading
+from threading import Lock,Thread
 import argparse
 from timeit import default_timer as timer
+#-----------------------------------initial display
+print("-----------------------------------------------")
+print("This program will ping through a list of ips, so it will take quite some time.\nTo increase the speed you can restart the program with the \'-t\' option.")
+print("-----------------------------------------------")
+#-----------------------------------general variables
+if any('SPYDER' in name for name in os.environ):
+    executed_in_spyder = True
+else:
+    executed_in_spyder = False
+
+
 
 #-----------------------------------parsing of arguments
 parser = argparse.ArgumentParser()
@@ -17,26 +28,37 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-n", "--number_ping", type=int, help="sets the number of times a server is pinged")
 parser.add_argument("-p", "--ping_delay", type=float, help="sets delay between each ping")
 parser.add_argument("-s", "--server_delay", type=float, help="sets delay between pinging of each server")
+parser.add_argument("-v", "--verbose", help="increase output verbosity",action="store_true")
+parser.add_argument("-t", "--threading", help="enable threading, desables ping and server delay",action="store_true")
 
 args = parser.parse_args()
 
 if not args.ping_delay: 
-    args.ping_delay = 0.01
+    if args.threading:
+        args.ping_delay = 0.02
+    else:
+        args.ping_delay = 0
 
 if not args.server_delay:
-    args.server_delay = 0.1
+    if args.threading:
+        args.server_delay = 0.3
+    else:
+        args.server_delay = 0
 
 if not args.number_ping:
-    args.number_ping = 20
+    if args.threading:
+        args.number_ping = 10
+    else:
+        args.number_ping = 5
 
 #-------------------------------some useful functions for threading
 
 start_time = time.time()
-verrou = threading.Lock()
+verrou = Lock()
 
 def printt(msg):
     with verrou:
-        sys.stdout.write(msg+"\n")
+        sys.stdout.write(str(msg)+"\n")
         
 def executer(task):
     with verrou:
@@ -44,9 +66,9 @@ def executer(task):
         
 #---------------------------------------
 
-class PingThread (threading.Thread):
+class PingThread (Thread):
    def __init__(self, ip, port, ipv6):
-      threading.Thread.__init__(self)
+      Thread.__init__(self)
       self.ip = ip
       self.port = port
       self.ipv6 = ipv6
@@ -87,9 +109,9 @@ class PingThread (threading.Thread):
                   raise
 
 
-class meanPingThread (threading.Thread):
+class meanPingThread (Thread):
    def __init__(self, ip, row, nb_ping, port, ipv6=False):
-      threading.Thread.__init__(self)
+      Thread.__init__(self)
       self.ip = ip
       self.row = row
       self.nb_ping = nb_ping 
@@ -100,11 +122,10 @@ class meanPingThread (threading.Thread):
    def run(self):
       global liste
       global down_liste
-      #global nb_ping
+
       
       try:
- #    sys.stdout.write("Pinging " + ip[0].split(':')[0] + "\r")
-         #with self.lock:
+
          if self.ipv6: #ipv6
              ping_result = meanPing(self.ip,args.number_ping,int(self.port), True)
          else:
@@ -186,6 +207,7 @@ def ping(addr, timeout=1, number=1, data=b'', ipv6 = False):
     except:
         raise
 
+socket.setdefaulttimeout(0.5) #everything that will take longer than 500ms to answer will be wonsidered non valid
 def pingtcp(host, port): 
 
     s_runtime = None
@@ -269,7 +291,11 @@ def meanPing(addr,nb,port,ipv6=False):
 
         time.sleep(args.ping_delay) #we add this little delay otherwise we might make the network saturate and give us wrong data
         threadlist.append(PingThread(addr,port,ipv6))
-        threadlist[i].start()
+        try:
+            threadlist[i].start()
+        except RuntimeError:
+            printt("The device cannot handle the number of threads. Please decrease the ping rate, or increase the delay, or disable pinging")          
+            os._exit(0)
         #with verrou:
             #sys.stdout.write("[+] ip: " + addr +" thread:" + hex(id(threadlist[i]))+"\n")
 
@@ -329,10 +355,17 @@ def pingDnscryptFile(filename):
                 
                 threadlist.append(meanPingThread(ip,row,args.number_ping, port))
                 count_thread = count_thread+1
-                threadlist[count_thread-1].start()
+                try:
+                    threadlist[count_thread-1].start()
+                except RuntimeError:
+                    printt("The device cannot handle the number of threads. Please decrease the ping rate, or increase the delay, or disable pinging")          
+                    os._exit(0)
+                
                 time.sleep(args.server_delay)
                 
-                #threadlist[count_thread].join()
+                if not args.threading: #if not threading then we join each thread before going on
+                    threadlist[count_thread-1].join()
+                
                 #print(threadlist[count_thread].ip)
 
             elif ipv6_available: #if ipv6 and if ipv6 available
@@ -341,19 +374,38 @@ def pingDnscryptFile(filename):
                 
                 threadlist.append(meanPingThread(ip[1].split("]")[0],row,args.number_ping, port, True)) 
                 count_thread = count_thread+1
-                threadlist[count_thread-1].start()
+                try:
+                    threadlist[count_thread-1].start()
+                except RuntimeError:
+                    printt("The device cannot handle the number of threads. Please decrease the ping rate, or increase the delay, or disable pinging")          
+                    os._exit(0)
                 time.sleep(args.server_delay)
+                
+                if not args.threading: #if not threading then we join each thread before going on
+                    threadlist[count_thread-1].join()
 
             else:
                 #print("Ip not treated:",row[10])
                 pass
-
-            #sys.stdout.write("Number of servers pinged: %d   \r" % (count_row) )
+            if not executed_in_spyder:
+                sys.stdout.write("Number of servers pinged: %d   \r" % (count_row) )
+            else:
+                sys.stdout.write("Number of servers pinged: %d   \n" % (count_row) )
     
     printt("----------------------Loading the result---------------------")
+    count_joined_thread = 0
     
-    for thread in threadlist:
-        thread.join()
+    if args.threading:
+    
+        for thread in threadlist:
+            if not executed_in_spyder:
+                sys.stdout.write("Number of thread joined: %d   \r" % (count_joined_thread))
+            else:
+                sys.stdout.write("Number of thread joined: %d   \n" % (count_joined_thread))
+            thread.join()
+            count_joined_thread = count_joined_thread + 1
+    
+        
     print("---------------------Sorting the list-----------------------")
 #    print(len(threadlist))
     mergeSort(liste)
@@ -382,9 +434,10 @@ def pingDnscryptFile(filename):
             else:b=1
 
         print(row[0] + a*"\t" + row[10] + b*"\t" + str(round(row[14]*1000,2)) + "\t" + "+/-" + str(round(row[15]*1000,2)) + "ms" + "\t"  + str(round(100-row[16]*100,1)) + "%" + "\t" + row[7] + "\t" + row[8] + "\t" + row[3])
-        
-    #print("Moyenne std:",round(mean(std_liste)*1000,3))
-    #print("Delais =",args.ping_delay,args.server_delay,"\nNb ping:",args.number_ping)
+    
+    if args.verbose:
+        print("Moyenne std:",round(mean(std_liste)*1000,3))
+        print("Delais between each ping:",args.ping_delay,"\nDelais between each server:",args.server_delay,"\nNb ping:",args.number_ping)
 
 
 def pingDnscrypt():
@@ -396,5 +449,5 @@ def pingDnscrypt():
 
 if __name__ == '__main__':
     pingDnscrypt()
-
-#print("--- %s seconds ---" % (time.time() - start_time))
+if args.verbose:
+    print("--- Executed in %s seconds ---" % (time.time() - start_time))
