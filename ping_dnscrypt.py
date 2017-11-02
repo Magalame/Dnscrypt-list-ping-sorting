@@ -30,6 +30,8 @@ parser.add_argument("-p", "--ping_delay", type=float, help="sets delay between e
 parser.add_argument("-s", "--server_delay", type=float, help="sets delay between pinging of each server")
 parser.add_argument("-v", "--verbose", help="increase output verbosity",action="store_true")
 parser.add_argument("-t", "--threading", help="enable threading, desables ping and server delay",action="store_true")
+parser.add_argument("-m", "--time_out", type=float, help="sets the timeout for pinging")
+
 
 args = parser.parse_args()
 
@@ -50,6 +52,9 @@ if not args.number_ping:
         args.number_ping = 10
     else:
         args.number_ping = 5
+        
+if not args.time_out:
+    args.time_out = 0.5
 
 #-------------------------------some useful functions for threading
 
@@ -207,7 +212,7 @@ def ping(addr, timeout=1, number=1, data=b'', ipv6 = False):
     except:
         raise
 
-socket.setdefaulttimeout(0.5) #everything that will take longer than 500ms to answer will be wonsidered non valid
+socket.setdefaulttimeout(args.time_out) #everything that will take longer than the timeout to answer will be considered non valid
 def pingtcp(host, port): 
 
     s_runtime = None
