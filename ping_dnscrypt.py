@@ -10,10 +10,6 @@ import urllib.request
 from threading import Lock,Thread
 import argparse
 from timeit import default_timer as timer
-#-----------------------------------initial display
-print("-----------------------------------------------")
-print("This program will ping through a list of ips, so it will take quite some time.\nTo increase the speed you can restart the program with the \'-t\' option.")
-print("-----------------------------------------------")
 #-----------------------------------general variables
 if any('SPYDER' in name for name in os.environ):
     executed_in_spyder = True
@@ -55,6 +51,12 @@ if not args.number_ping:
         
 if not args.time_out:
     args.time_out = 0.5
+
+if not args.threading:
+    print("-----------------------------------------------")
+    print("This program will ping through a list of ips, so it will take quite some time.\nTo increase the speed you can restart the program with the \'-t\' option.")
+    print("-----------------------------------------------")
+
 
 #-------------------------------some useful functions for threading
 
