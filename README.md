@@ -33,13 +33,11 @@ You can also define a delay between each time we start pinging a server (as the 
 `sudo python3 ping_dnscrypt.py -s yourdelayinsecondshere`
 
 # You don't have python or the good version of python, and you want to download an executable?
-You can download it here: https://drive.google.com/open?id=0Bxzq1JsVPF3eS2EzVHFwX0RNU28
+You can download an installer here: https://drive.google.com/open?id=0Bxzq1JsVPF3eS2EzVHFwX0RNU28
 
-Here is a portable version: https://drive.google.com/open?id=0Bxzq1JsVPF3eaHh3ZXZXSHV6QVE
+Here is a portable version (it's probably better than the installer): https://drive.google.com/open?id=0Bxzq1JsVPF3eaHh3ZXZXSHV6QVE
 
-Once downloaded and installed, you can launch it by typing
-`"C:\Program Files\Ping dnscrypt\pingdnscrypt.exe"`
-with the quotation signs.
+Once downloaded (and maybe installed if applicable), find where is located 'pingdnscrypt.exe', then run it. 
 
-# The display isn't great, some charac returns are missed
+# It might happen that the display isn't great, some charac returns are missed sometimes
 I don't know how to solve it yet, for now I strongly recommend you use it in full screen (not the F11 type of fullscren, just when you click on the square next to the cross at the top right corner of the terminal).
