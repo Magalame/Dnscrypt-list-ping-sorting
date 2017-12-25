@@ -20,7 +20,7 @@ If you think it goes too slowly you can increase the speed by using threading (a
 
 `sudo python3 ping_dnscrypt.py -t`
 
-The default number of ping per server is 5 without threading, 10 with. You can specify the number if you want to change that:
+The default number of ping per server is 5 without threading, 10 with. You can specify the number if you want to change that (for example if you want to increase the precision of the 'reliability' parameter):
 
 `sudo python3 ping_dnscrypt.py -n yournumberhere`
 
