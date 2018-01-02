@@ -24,7 +24,7 @@ The default number of ping per server is 5 without threading, 10 with. You can s
 
 `sudo python3 ping_dnscrypt.py -n yournumberhere`
 
-Although if you increase this number too much with the threading activated you might overload your network, and you will end up with inaccurate results. To avoid that you can define delay between every single ping request ping, the default is 0.02 seconds:
+Although if you increase this number too much with the threading activated you might overload your network, and you will end up with inaccurate results. To avoid that you can define delay between every single ping request, the default is 0.02 seconds:
 
 `sudo python3 ping_dnscrypt.py -p yourdelayinsecondshere`
 
