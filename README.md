@@ -33,9 +33,7 @@ You can also define a delay between each time we start pinging a server (as the 
 `sudo python3 ping_dnscrypt.py -s yourdelayinsecondshere`
 
 # You don't have python or the good version of python, and you want to download an executable (Windows)?
-You can download an installer here: https://drive.google.com/open?id=0Bxzq1JsVPF3eS2EzVHFwX0RNU28
-
-Here is a portable version, **it's probably better than the installer**: https://drive.google.com/open?id=0Bxzq1JsVPF3eaHh3ZXZXSHV6QVE
+A portable version: https://drive.google.com/file/d/1o3ndcbgBnt4d_ErJ64FXeKWJMU3cgvK-/view?usp=sharing
 
 Once downloaded (and maybe installed if applicable), find where is located 'pingdnscrypt.exe', then run it. 
 
