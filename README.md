@@ -35,7 +35,9 @@ You can also define a delay between each time we start pinging a server (as the 
 # You don't have python or the good version of python, and you want to download an executable (Windows)?
 A portable version: https://drive.google.com/file/d/1o3ndcbgBnt4d_ErJ64FXeKWJMU3cgvK-/view?usp=sharing
 
-Once downloaded (and maybe installed if applicable), find where is located 'pingdnscrypt.exe', then run it. 
+Once downloaded (and maybe installed if applicable), find where is located 'pingdnscrypt.exe', then run open a terminal and type
+
+`ping_dnscrypt.exe`
 
 # It might happen that the display isn't great, some charac returns are missed sometimes
 I don't know how to solve it yet, for now I strongly recommend you use it in full screen (not the F11 type of fullscren, just when you click on the square next to the cross at the top right corner of the terminal).
