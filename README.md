@@ -1,5 +1,5 @@
 # Dnscrypt-list-ping-sorting
-A program to ping and sort the DNS servers proposed by dnscrypt, see here: https://dnscrypt.org
+A program to ping and sort the DNS servers proposed by dnscrypt, see here: https://dnscrypt.info/
 
 The script pings 5 times each server, and displays the average and the error on the mean and the reliablity. The final display lists all the servers that responded, sorted by their ping time.
 
@@ -32,10 +32,13 @@ You can also define a delay between each time we start pinging a server (as the 
 
 `sudo python3 ping_dnscrypt.py -s yourdelayinsecondshere`
 
-# You don't have python or the good version of python, and you want to download an executable (Windows)?
-A portable version: https://drive.google.com/file/d/1o3ndcbgBnt4d_ErJ64FXeKWJMU3cgvK-/view?usp=sharing
 
-Once downloaded (and maybe installed if applicable), find where is located 'pingdnscrypt.exe', then run open a terminal and type
+
+# You don't have python or the good version of python, and you want to download an executable (Windows)?
+Portable version: https://drive.google.com/file/d/1o3ndcbgBnt4d_ErJ64FXeKWJMU3cgvK-/view?usp=sharing
+And for 32 bits: https://drive.google.com/open?id=1aDX-0h7k9nAIBg0lFi5961_kjKOa7vPw
+
+Once downloaded, find where is located 'pingdnscrypt.exe', then run open a terminal and type
 
 `ping_dnscrypt.exe`
 
