@@ -3,7 +3,7 @@ A program to ping and sort the DNS servers proposed by dnscrypt, see here: https
 
 The script pings 5 times each server, and displays the average and the error on the mean and the reliablity. The final display lists all the servers that responded, sorted by their ping time.
 
-It's written in python3 and (unfortunately) needs root privileges because of the ping function that requires creating sockets. 
+It's written in python3 and (unfortunately) needs root privileges because of the ping function that requires creating sockets — except for the executable version. 
 
 The ping function is from there: https://gist.github.com/pyos/10980172
 
