@@ -48,17 +48,31 @@ I don't know how to solve it yet, for now I strongly recommend you use it in ful
 
 
 `INFO: Updating cache of IJulia...
+
 INFO: Installing BinDeps v0.8.8
+
 INFO: Installing BinaryProvider v0.3.0
+
 INFO: Installing Compat v0.64.0
+
 INFO: Installing Conda v0.7.1
+
 INFO: Installing IJulia v1.8.0
+
 INFO: Installing JSON v0.17.2
+
 INFO: Installing MbedTLS v0.5.8
+
 INFO: Installing Nullables v0.0.5
+
 INFO: Installing SHA v0.5.7
+
 INFO: Installing URIParser v0.3.1
+
 INFO: Installing ZMQ v0.6.0
+
 INFO: Building Conda
+
 INFO: Building MbedTLS
+
 INFO: Building ZMQ`
