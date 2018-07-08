@@ -450,7 +450,7 @@ def pingDnscryptFile(filename):
 def pingDnscrypt():
 
     if not os.path.isfile("dnscrypt-resolvers.csv"):
-        urllib.request.urlretrieve("https://raw.githubusercontent.com/jedisct1/dnscrypt-proxy/master/dnscrypt-resolvers.csv","dnscrypt-resolvers.csv")
+        urllib.request.urlretrieve("https://raw.githubusercontent.com/dyne/dnscrypt-proxy/master/dnscrypt-resolvers.csv","dnscrypt-resolvers.csv")
     pingDnscryptFile("dnscrypt-resolvers.csv")
 
 
