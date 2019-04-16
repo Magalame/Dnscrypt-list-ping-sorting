@@ -10,7 +10,7 @@ The ping function is from there: https://gist.github.com/pyos/10980172
 # How to use it?
 The most straightforward way is simply to go with:
 
-`wget https://raw.githubusercontent.com/LawLawL/Dnscrypt-list-ping-sorting/master/ping_dnscrypt.py`
+`wget https://raw.githubusercontent.com/Magalame/Dnscrypt-list-ping-sorting/master/ping_dnscrypt.py`
 
 then
 
