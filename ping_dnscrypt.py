@@ -6,7 +6,7 @@ import struct
 import select
 import socket
 import sys
-import urllib.request
+import urllib
 from threading import Lock,Thread
 import argparse
 from timeit import default_timer as timer
@@ -136,7 +136,7 @@ class meanPingThread (Thread):
          if self.ipv6: #ipv6
              ping_result = meanPing(self.ip,args.number_ping,int(self.port), True)
          else:
-             ping_result = meanPing(self.ip[0].split(':')[0],args.number_ping,self.port) #le deuxieme paramètre est le nombre de ping
+             ping_result = meanPing(self.ip[0].split(':')[0],args.number_ping,self.port) #le deuxieme parametre est le nombre de ping
  
       except Exception as e:
          
@@ -338,9 +338,9 @@ def pingDnscryptFile(filename):
     down_liste = []
     
     count_row = 0
-    count_thread = 0 #pour suivre le nombre de thread vraiment commencés qui est different du nombre de row
+    count_thread = 0 #pour suivre le nombre de thread vraiment commences qui est different du nombre de row
     
-    threadlist = [] #avoir la liste des threads pour les gérer
+    threadlist = [] #avoir la liste des threads pour les gerer
     
     reader = csv.reader(open(filename, "rt"), delimiter=",")
 #    ipv6_available = True
@@ -450,7 +450,7 @@ def pingDnscryptFile(filename):
 def pingDnscrypt():
 
     if not os.path.isfile("dnscrypt-resolvers.csv"):
-        urllib.request.urlretrieve("https://raw.githubusercontent.com/dyne/dnscrypt-proxy/master/dnscrypt-resolvers.csv","dnscrypt-resolvers.csv")
+        urllib.urlretrieve("https://raw.githubusercontent.com/dyne/dnscrypt-proxy/master/dnscrypt-resolvers.csv","dnscrypt-resolvers.csv")
     pingDnscryptFile("dnscrypt-resolvers.csv")
 
 
