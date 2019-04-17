@@ -16,7 +16,7 @@ then
 
 `sudo python3 ping_dnscrypt.py`
 
-**If you think it goes too slowly** you can increase the speed by using threading (although it might make the data less reliable, use it only if you're in a rush):
+**If you think it goes too slowly** you can increase the speed by using threading (although it might make the data less reliable):
 
 `sudo python3 ping_dnscrypt.py -t`
 
