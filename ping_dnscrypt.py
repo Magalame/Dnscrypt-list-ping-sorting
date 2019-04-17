@@ -6,7 +6,7 @@ import struct
 import select
 import socket
 import sys
-import urllib
+import urllib.request
 from threading import Lock,Thread
 import argparse
 from timeit import default_timer as timer
@@ -450,7 +450,7 @@ def pingDnscryptFile(filename):
 def pingDnscrypt():
 
     if not os.path.isfile("dnscrypt-resolvers.csv"):
-        urllib.urlretrieve("https://raw.githubusercontent.com/dyne/dnscrypt-proxy/master/dnscrypt-resolvers.csv","dnscrypt-resolvers.csv")
+        urllib.request.urlretrieve("https://raw.githubusercontent.com/dyne/dnscrypt-proxy/master/dnscrypt-resolvers.csv","dnscrypt-resolvers.csv")
     pingDnscryptFile("dnscrypt-resolvers.csv")
 
 
